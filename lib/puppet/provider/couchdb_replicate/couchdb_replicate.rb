@@ -1,12 +1,12 @@
 require 'json'
 require 'open-uri'
 
-# Manage CouchDB replication 
+# Manage CouchDB replication
 
 Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
-  desc "Manages `systemd` services using `systemctl`."
+  desc "Manages CouchDB replications."
 
-  def create 
+  def create
 
     target_url = "#{resource[:target_server]}"+"/"+"#{resource[:target_database]}"
 
@@ -18,7 +18,7 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
       request = Net::HTTP::Post.new("/_replicator")
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
-      request.body = {'_id' => 'replicated', 'source' => resource[:name], 'target' => target_url, 'continuous' => resource[:continuous]}.to_json
+      request.body = {'_id' => resource[:name], 'source' => resource[:source_database], 'target' => target_url, 'continuous' => resource[:continuous]}.to_json
       response = http.request(request)
     rescue OpenURI::HTTPError, Timeout::Error, Errno::EINVAL,
            Errno::ECONNRESET, EOFError, Net::HTTPBadResponse,
@@ -33,13 +33,13 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
       http = Net::HTTP.new(uri.host,uri.port)
       #http.use_ssl = true
       #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      request = Net::HTTP::Get.new("/_replicator/replicated")
+      request = Net::HTTP::Get.new("/_replicator/"+resource[:name])
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
       response = http.request(request)
       rev_id = JSON.parse(response.body())['_rev']
 
-      request = Net::HTTP::Delete.new("/_replicator/replicated?rev="+rev_id)
+      request = Net::HTTP::Delete.new("/_replicator/"+resource[:name]+"?rev="+rev_id)
       request.basic_auth(resource[:username], resource[:password])
       response = http.request(request)
     rescue OpenURI::HTTPError, Timeout::Error, Errno::EINVAL,
@@ -56,7 +56,7 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
       http = Net::HTTP.new(uri.host,uri.port)
       #http.use_ssl = true
       #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      request = Net::HTTP::Get.new("/_replicator/replicated")
+      request = Net::HTTP::Get.new("/_replicator/"+resource[:name])
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
       response = http.request(request)
