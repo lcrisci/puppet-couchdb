@@ -9,14 +9,14 @@ Puppet::Type.newtype(:couchdb_replicate) do
     Example:
 
             couchdb_replicate {'document_name':
-              user  => root,
-              password => moo,
-              source_server => "http://couchdb_source_server:5984",
-              target_server => "http://couchdb_target_server:5984",
+              username        => admin,
+              password        => moo,
+              source_server   => "http://couchdb_source_server:5984",
+              target_server   => "http://couchdb_target_server:5984",
               source_database => "source_database",
               target_database => "target_database",
-              continuous => true,
-              ensure => present,
+              continuous      => true,
+              ensure          => present,
             }
   }
 

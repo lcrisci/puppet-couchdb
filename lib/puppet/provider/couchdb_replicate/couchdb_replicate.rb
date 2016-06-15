@@ -25,6 +25,10 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
            Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
       raise Puppet::ParseError, "couchdb_replicate: '#{e.message}'"
     end
+
+    if response.code != "200"
+      raise Puppet::Error, "Replication Setup failed with the following HTTP response code: #{response.code}"
+    end
   end
 
   def destroy
@@ -46,6 +50,10 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
            Errno::ECONNRESET, EOFError, Net::HTTPBadResponse,
            Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
       raise Puppet::ParseError, "couchdb_replicate: '#{e.message}'"
+    end
+
+    if response.code != "200"
+      raise Puppet::Error, "Replication Removal with the following HTTP response code: #{response.code}"
     end
   end
 
