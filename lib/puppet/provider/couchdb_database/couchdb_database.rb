@@ -11,8 +11,10 @@ Puppet::Type.type(:couchdb_database).provide(:couchdb_database) do
     begin
       uri = URI.parse(resource[:server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Put.new("/"+resource[:name]+"/")
       request.basic_auth(resource[:username], resource[:password])
       response = http.request(request)
@@ -24,7 +26,7 @@ Puppet::Type.type(:couchdb_database).provide(:couchdb_database) do
     end
 
     if response.code != "201"
-      raise Puppet::Error, "Database Setup failed with the following HTTP response code: #{response.code}"
+      raise Puppet::Error, "Database Setup failed with the following message: #{response.message}"
     end
   end
 
@@ -32,8 +34,10 @@ Puppet::Type.type(:couchdb_database).provide(:couchdb_database) do
     begin
       uri = URI.parse(resource[:server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Delete.new("/"+resource[:name]+"/")
       request.basic_auth(resource[:username], resource[:password])
       response = http.request(request)
@@ -45,7 +49,7 @@ Puppet::Type.type(:couchdb_database).provide(:couchdb_database) do
     end
 
     if response.code != "200"
-      raise Puppet::Error, "Database Removal failed with the following HTTP response code: #{response.code}"
+      raise Puppet::Error, "Database Removal failed with the following message: #{response.message}"
     end
   end
 
@@ -54,8 +58,10 @@ Puppet::Type.type(:couchdb_database).provide(:couchdb_database) do
     begin
       uri = URI.parse(resource[:server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Get.new("/"+resource[:name]+"/")
       request.basic_auth(resource[:username], resource[:password])
       response = http.request(request)

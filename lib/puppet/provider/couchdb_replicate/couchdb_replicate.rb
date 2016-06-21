@@ -13,8 +13,10 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
     begin
       uri = URI.parse(resource[:source_server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:source_server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Post.new("/_replicator")
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
@@ -27,7 +29,7 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
     end
 
     if response.code != "200"
-      raise Puppet::Error, "Replication Setup failed with the following HTTP response code: #{response.code}"
+      raise Puppet::Error, "Replication Setup failed with the following message: #{response.message}"
     end
   end
 
@@ -35,8 +37,10 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
     begin
       uri = URI.parse(resource[:source_server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:source_server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Get.new("/_replicator/"+resource[:name])
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
@@ -53,7 +57,7 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
     end
 
     if response.code != "200"
-      raise Puppet::Error, "Replication Removal with the following HTTP response code: #{response.code}"
+      raise Puppet::Error, "Replication Removal with the following message: #{response.message}"
     end
   end
 
@@ -62,8 +66,10 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
     begin
       uri = URI.parse(resource[:source_server])
       http = Net::HTTP.new(uri.host,uri.port)
-      #http.use_ssl = true
-      #http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if resource[:source_server].start_with?("https")
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Get.new("/_replicator/"+resource[:name])
       request.basic_auth(resource[:username], resource[:password])
       request.add_field('Content-Type', 'application/json')
