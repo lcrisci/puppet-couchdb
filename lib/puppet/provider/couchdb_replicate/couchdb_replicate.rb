@@ -28,7 +28,7 @@ Puppet::Type.type(:couchdb_replicate).provide(:couchdb_replicate) do
       raise Puppet::ParseError, "couchdb_replicate: '#{e.message}'"
     end
 
-    if response.code != "200"
+    if response.code != "201"
       raise Puppet::Error, "Replication Setup failed with the following message: #{response.message}"
     end
   end
